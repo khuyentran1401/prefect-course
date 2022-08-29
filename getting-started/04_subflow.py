@@ -1,12 +1,15 @@
 from prefect import flow
 
-@flow 
+
+@flow
 def prepare_for_training():
-	...
+    ...
+
 
 @flow
 def train():
-	...
+    ...
+
 
 @flow
 def development():

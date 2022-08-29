@@ -1,10 +1,9 @@
+import gdown
 import pandas as pd
-
+from hydra import compose, initialize
 # Imports for loading configuration
 from omegaconf import DictConfig
-from hydra import compose, initialize
 from prefect import flow, task
-import gdown
 
 
 @task

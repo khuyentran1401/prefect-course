@@ -1,9 +1,8 @@
+import gdown
 import pandas as pd
-
+from hydra import compose, initialize
 # Imports for loading configuration
 from omegaconf import DictConfig
-from hydra import compose, initialize
-import gdown
 
 
 def load_config():
