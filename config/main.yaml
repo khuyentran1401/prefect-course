@@ -1,7 +1,6 @@
 data:
-  raw: train
-  test: test
-  prediction: prediction
+  url: https://drive.google.com/uc?id=1jjmMAOIRGdDyCNR7WT-us2a2tuaRFfXr
+  raw: "data/raw/new.csv"
 
 connection:
   user: postgres
