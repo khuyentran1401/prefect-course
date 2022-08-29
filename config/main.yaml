@@ -1,0 +1,61 @@
+data:
+  raw: train
+  test: test
+  prediction: prediction
+
+connection:
+  user: postgres
+  password: 123456
+  host: localhost:5432
+  database: pet_finder
+
+n_estimators: 20
+use_cols:
+  - Type
+  - Age
+  - Breed1
+  - Breed2
+  - Gender
+  - Color1
+  - Color2
+  - Color3
+  - MaturitySize
+  - FurLength
+  - Vaccinated
+  - Dewormed
+  - Sterilized
+  - Health
+  - Quantity
+  - Fee
+  - desc_length
+  - desc_words
+  - average_word_length
+  - AdoptionSpeed
+cat_cols:
+  - Type
+  - Breed1
+  - Breed2
+  - Gender
+  - Color1
+  - Color2
+  - Color3
+  - MaturitySize
+  - FurLength
+  - Vaccinated
+  - Dewormed
+  - Sterilized
+  - Health
+label: AdoptionSpeed
+
+n_splits: 5
+params:
+  objective: multiclass
+  max_depth: 4
+  alpha: 10
+  learning_rate: 1.0
+  n_estimators: 10
+  random_state: 0
+
+model:
+  dir: /Users/khuyen/prefect2-mlops-demo/
+  save_path: model/xgboost
