@@ -1,15 +1,17 @@
 import time
+from random import randint
 
 from prefect import flow, task
+from prefect_dask import DaskTaskRunner
 
 
 @task
 def shout(number):
-    time.sleep(0.5)
+    time.sleep(randint(0, 5))
     print(f"#{number}")
 
 
-@flow
+@flow(task_runner=DaskTaskRunner)
 def count_to(highest_number):
     for number in range(highest_number):
         shout.submit(number)

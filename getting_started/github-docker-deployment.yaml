@@ -1,0 +1,66 @@
+###
+### A complete description of a Prefect Deployment for flow 'Create a Report for Google Trends'
+###
+name: github-docker
+description: null
+version: f378c314d60055fb77596063af7a2478
+# The work queue that will handle this deployment's runs
+work_queue_name: test
+tags: []
+parameters: {}
+schedule: null
+infra_overrides: {}
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: Create a Report for Google Trends
+manifest_path: null
+infrastructure:
+  type: docker-container
+  env: {}
+  labels: {}
+  name: null
+  command:
+  - python
+  - -m
+  - prefect.engine
+  image: khuyentran1401/google-trends:first
+  image_pull_policy: null
+  image_registry: null
+  networks: []
+  network_mode: null
+  auto_remove: false
+  volumes: []
+  stream_output: true
+  _block_document_id: c4206f0b-b972-4fbd-95bb-472207ab15c6
+  _block_document_name: google-trends
+  _is_anonymous: false
+  _block_type_slug: docker-container
+storage:
+  repository: https://github.com/khuyentran1401/prefect-docker
+  reference: master
+  _block_document_id: 3b7b7ebd-ac78-4478-97b6-35809da0ca7b
+  _block_document_name: pytrends
+  _is_anonymous: false
+  _block_type_slug: github
+path: src/main.py
+entrypoint: google_trends/main.py:create_pytrends_report
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    keyword:
+      title: keyword
+      default: COVID
+      type: string
+    start_date:
+      title: start_date
+      default: '2020-01-01'
+      type: string
+    num_countries:
+      title: num_countries
+      default: 10
+      type: integer
+  required: null
+  definitions: null
