@@ -11,14 +11,14 @@ def get_pytrends(keyword: str):
     return pytrends
 
 
-@task
+@task(retries=3, retry_delay_seconds=10)
 def get_interest_overtime(pytrends: TrendReq, keyword: str, start_date: str):
     df = pytrends.interest_over_time().loc[start_date:]
     fig = px.line(data_frame=df[keyword])
     return [dp.Text("# Interest Overtime"), dp.Plot(fig)]
 
 
-@task
+@task(retries=3, retry_delay_seconds=10)
 def get_interest_by_region(
     pytrends: TrendReq, keyword: str, num_countries: int
 ):
@@ -29,7 +29,7 @@ def get_interest_by_region(
     return [dp.Text("# Interest by Countries"), dp.Plot(fig)]
 
 
-@task
+@task(retries=3, retry_delay_seconds=10)
 def get_related_queries(pytrends: TrendReq, keyword: str):
     df = pytrends.related_queries()[keyword]["top"]
     fig = px.bar(data_frame=df, x="query", y="value")
