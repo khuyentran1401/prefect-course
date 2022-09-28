@@ -11,7 +11,7 @@ def shout(number):
     print(f"#{number}")
 
 
-@flow(task_runner=DaskTaskRunner)
+@flow(task_runner=DaskTaskRunner())
 def count_to(highest_number):
     for number in range(highest_number):
         shout.submit(number)

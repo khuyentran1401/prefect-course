@@ -1,46 +1,41 @@
+import random
 from datetime import timedelta
+from time import sleep
 
-import gdown
-import pandas as pd
-from hydra import compose, initialize
-# Imports for loading configuration
-from omegaconf import DictConfig
 from prefect import flow, task
 from prefect.tasks import task_input_hash
 
 
-@task
-def load_config():
-    with initialize(version_base=None, config_path="../config"):
-        config = compose(config_name="main")
-    return config
+@task(name="May Fail")
+def may_fail():
+    outcome = random.choice([0, 1, 2])
+    if outcome == 0:
+        raise ValueError("The outcome can't be 0.")
+    return outcome
 
 
-@task
-def get_data(config: DictConfig):
-    gdown.download(config.data.url, config.data.raw, quiet=False)
-    return pd.read_csv(config.data.raw)
+@task(
+    name="Very Large Computation",
+    cache_key_fn=task_input_hash,
+    cache_expiration=timedelta(days=1),
+)
+def large_computation(outcome):
+    sleep(5)
+    return 2 / outcome
 
 
-@task(cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
-def fill_missing_description(data: pd.DataFrame):
-    data["Description"] = data["Description"].fillna("")
-    return data
+@task(name="Follows Large Computation")
+def follows_large_computation(num):
+    return num + 1
 
 
-@task
-def get_desc_length(data: pd.DataFrame):
-    data["desc_length"] = data["Description"].str.len()
-    return data
-
-
-@flow
-def process_data():
-    config = load_config()
-    data = get_data(config)
-    na_processed = fill_missing_description(data)
-    feature_added = get_desc_length(na_processed)
+@flow(name="Cached flow")
+def main():
+    outcome = may_fail()
+    num = large_computation(outcome)
+    final = follows_large_computation(num)
+    return final
 
 
 if __name__ == "__main__":
-    process_data()
+    main()

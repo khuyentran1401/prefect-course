@@ -1,10 +1,7 @@
 datapane==0.15.1
-gdown==4.5.1
-hydra-core==1.2.0
-omegaconf==2.2.2
 pandas==1.4.2
 plotly==5.10.0
 prefect>=2.3.2
-prefect_dask==0.1.2
+prefect_dask>=0.2.0
 prefect_shell==0.1.1
 pytrends==4.8.0

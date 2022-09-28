@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
@@ -8,6 +8,7 @@ sys.path.append(parent)
 from google_trends.create_report import create_report
 from google_trends.get_data import get_keywords_stats
 from prefect import flow
+
 
 @flow(name="Create a Report for Google Trends")
 def create_pytrends_report(

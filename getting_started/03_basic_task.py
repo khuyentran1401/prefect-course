@@ -1,43 +1,52 @@
-import gdown
+from typing import Tuple
+
 import pandas as pd
-from hydra import compose, initialize
-# Imports for loading configuration
-from omegaconf import DictConfig
-from prefect import flow, task
+from prefect import flow, get_run_logger, task
+from pytrends.request import TrendReq
 
 
 @task
-def load_config():
-    with initialize(version_base=None, config_path="../config"):
-        config = compose(config_name="main")
-    return config
+def get_pytrends(keywords: Tuple[str, str]):
+    pytrends = TrendReq(hl="en-US", tz=360)
+    pytrends.build_payload(keywords)
+    return pytrends
 
 
 @task
-def get_data(config: DictConfig):
-    gdown.download(config.data.url, config.data.raw, quiet=False)
-    return pd.read_csv(config.data.raw)
+def get_interest_overtime(pytrends: TrendReq, start_date: str):
+    interest = pytrends.interest_over_time().loc[start_date:]
+    return interest
 
 
 @task
-def fill_missing_description(data: pd.DataFrame):
-    data["Description"] = data["Description"].fillna("")
+def get_difference(data: pd.DataFrame):
+    data["difference"] = data.diff(axis=1).iloc[:, -1].abs().values
     return data
 
 
 @task
-def get_desc_length(data: pd.DataFrame):
-    data["desc_length"] = data["Description"].str.len()
-    return data
+def get_difference_by_year(data: pd.DataFrame, keywords: Tuple[str, str]):
+    mean_diff = data.groupby(data.index.year)["difference"].mean()
+    logger = get_run_logger()
+    logger.info(
+        f"The mean difference in the number of interests by year between the keywords {keywords[0]} and {keywords[1]} is:"
+    )
+    logger.info(mean_diff)
+    return mean_diff
 
 
 @flow
-def process_data():
-    config = load_config()
-    data = get_data(config)
-    na_processed = fill_missing_description(data)
-    feature_added = get_desc_length(na_processed)
+def compare_two_keywords(keywords: list, start_date: str):
+    pytrends = get_pytrends(keywords)
+    interest = get_interest_overtime(pytrends, start_date)
+    difference = get_difference(interest)
+    mean_difference = get_difference_by_year(difference, keywords)
+    return mean_difference
 
 
 if __name__ == "__main__":
-    process_data()
+    keywords = ("data engineer", "data scientist")
+    start_date = "2020-01-01"
+    mean_difference = compare_two_keywords(
+        keywords=keywords, start_date=start_date
+    )
